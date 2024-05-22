@@ -38,6 +38,10 @@ handler.handleReqRes = (req, res) => {
     headersObj,
   };
 
+  const chosenHandler = routes[trimmedPath]
+    ? routes[trimmedPath]
+    : notFoundHandler.handle;
+
   const decoder = new StringDecoder("utf-8");
   let realData: string = "";
 
@@ -45,24 +49,20 @@ handler.handleReqRes = (req, res) => {
     realData += decoder.write(buffer);
   });
 
-  const chosenHandler = routes[trimmedPath]
-    ? routes[trimmedPath]
-    : notFoundHandler.handle;
-
-  chosenHandler(
-    requestProperties,
-    (statusCode: number, payload: string | object) => {
-      //
-      payload = typeof payload === "object" ? payload : {};
-      const payloadStr = JSON.stringify(payload);
-
-      res.writeHead(statusCode);
-      res.end(payloadStr);
-    }
-  );
-
   req.on("end", () => {
     realData += decoder.end();
+    console.log(realData);
+    chosenHandler(
+      requestProperties,
+      (statusCode: number, payload: string | object) => {
+        //
+        payload = typeof payload === "object" ? payload : {};
+        const payloadStr = JSON.stringify(payload);
+
+        res.writeHead(statusCode);
+        res.end(payloadStr);
+      }
+    );
   });
 };
 
