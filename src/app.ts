@@ -15,8 +15,8 @@ type App = {
 
 const app: App = {};
 
-data.create("test", "newFile", { Area: "Dhaka", color: "red" }, (err) => {
-  console.log("error was" + err);
+data.update("test", "newFile", { Area: "Cumilla", color: "Orange" }, (err) => {
+  console.log(err);
 });
 
 // app.config = {
