@@ -15,9 +15,9 @@ type App = {
 
 const app: App = {};
 
-data.update("test", "newFile", { Area: "Cumilla", color: "Orange" }, (err) => {
-  console.log(err);
-});
+// data.delete("test", "newFile", (err) => {
+//   console.log(err);
+// });
 
 // app.config = {
 //   port: 3000,

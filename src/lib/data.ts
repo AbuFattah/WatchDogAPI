@@ -7,19 +7,21 @@ type Callback = (
 ) => void;
 
 type Lib = {
-  basedir?: string;
+  basedir: string;
   create: (dir: string, file: string, data: object, callback: Callback) => void;
   read: (dir: string, file: string, cb: Callback) => void;
   update: (dir: string, file: string, data: object, callback: Callback) => void;
+  delete: (dir: string, file: string, callback: Callback) => void;
 };
 
 const lib: Lib = {
+  basedir: path.join(__dirname, "./../.data/"),
   create: () => {},
   read: () => {},
   update: () => {},
+  delete: () => {},
 };
 
-lib.basedir = path.join(__dirname, "./../.data/");
 //write data to file
 lib.create = (dir, file, data, callback) => {
   const filePath = `${lib.basedir + dir}/${file}.json`;
@@ -85,6 +87,19 @@ lib.update = (dir, file, data, cb) => {
     } else {
       cb("Error updating file may not exist");
     }
+  });
+};
+
+lib.delete = (dir, file, callback) => {
+  const filePath = path.join(lib.basedir, dir, file) + ".json";
+
+  fs.unlink(filePath, (err) => {
+    if (err) {
+      callback("Error deleting file");
+      return;
+    }
+
+    callback(false);
   });
 };
 
