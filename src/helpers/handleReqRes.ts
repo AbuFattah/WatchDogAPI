@@ -4,6 +4,7 @@ import { parse, UrlWithParsedQuery } from "url";
 import routes from "../routes";
 import { notFoundHandler } from "../handlers/routeHandlers/notFoundHandler";
 import { ParsedUrlQuery } from "querystring";
+import { utilities } from "./utilities";
 
 type Handle = {
   handleReqRes?: (req: IncomingMessage, res: ServerResponse) => void;
@@ -16,6 +17,8 @@ export type ReqProperties = {
   method: string | undefined;
   qryStrObj: ParsedUrlQuery;
   headersObj: IncomingHttpHeaders;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  body: { [key: string]: any };
 };
 
 const handler: Handle = {};
@@ -29,13 +32,14 @@ handler.handleReqRes = (req, res) => {
   const qryStrObj = parsedUrl.query;
   const headersObj = req.headers;
 
-  const requestProperties = {
+  const requestProperties: ReqProperties = {
     parsedUrl,
     path,
     trimmedPath,
     method,
     qryStrObj,
     headersObj,
+    body:{}
   };
 
   const chosenHandler = routes[trimmedPath]
@@ -52,6 +56,7 @@ handler.handleReqRes = (req, res) => {
   req.on("end", () => {
     realData += decoder.end();
     console.log(realData);
+    requestProperties.body = utilities.parseJSON(realData);
     chosenHandler(
       requestProperties,
       (statusCode: number, payload: string | object) => {
@@ -59,6 +64,7 @@ handler.handleReqRes = (req, res) => {
         payload = typeof payload === "object" ? payload : {};
         const payloadStr = JSON.stringify(payload);
 
+        res.setHeader("Content-Type", "application/json");
         res.writeHead(statusCode);
         res.end(payloadStr);
       }

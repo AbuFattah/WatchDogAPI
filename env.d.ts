@@ -3,6 +3,7 @@ declare global {
     interface ProcessEnv {
       STAGINGPORT: string;
       PRODUCTIONPORT: string;
+      SECRET_KEY: string;
     }
   }
 }
