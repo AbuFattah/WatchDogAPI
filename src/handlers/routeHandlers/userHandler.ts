@@ -35,12 +35,66 @@ handler.userHandler = (reqProp, callback) => {
 handler._users = {};
 
 handler._users.get = (reqProp, callback) => {
-  callback(200, {
-    message: "Hellow this is user handler",
+  const phone = reqProp.qryStrObj.phone as string;
+
+  if (!validatePhone(phone)) {
+    callback(404, {
+      error: "Requested user was not founfd",
+    });
+  }
+  //if valid phone
+  data.read("users", phone, (err, data) => {
+    if (err) {
+      callback(500, {
+        error: "Server Error",
+      });
+      return;
+    }
+    //if no error
+    const user = utilities.parseJSON(data || "");
+    delete user.password;
+    callback(200, user);
   });
 };
 
-//handler._users.put = (reqProp, callback) => {};
+handler._users.put = (reqProp, callback) => {
+  const phone = validatePhone(reqProp.body.phone);
+
+  if (!phone) {
+    callback(400, { error: "There is a problem with your request" });
+    return;
+  }
+
+  data.read("users", phone, (err, dta) => {
+    if (err) {
+      callback(400, { error: "There is a problem with your request" });
+      return;
+    }
+
+    const userData = utilities.parseJSON(dta || "");
+
+    const firstName = validateName(reqProp.body.firstName);
+    const lastName = validateName(reqProp.body.lastName);
+    const password = validateName(reqProp.body.password);
+
+    firstName && (userData.firstName = firstName);
+    lastName && (userData.lastName = lastName);
+    password && (userData.password = utilities.hash(password));
+
+    data.update("users", phone, userData, (err) => {
+      if (err) {
+        callback(500, {
+          error: "There was a problem in server side",
+        });
+        return;
+      }
+
+      callback(200, {
+        message: "User updated successfully ",
+      });
+    });
+  });
+};
 
 handler._users.post = (reqProp, callback) => {
   const firstName = validateName(reqProp.body.firstName);

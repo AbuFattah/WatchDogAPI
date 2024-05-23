@@ -39,7 +39,7 @@ handler.handleReqRes = (req, res) => {
     method,
     qryStrObj,
     headersObj,
-    body:{}
+    body: {},
   };
 
   const chosenHandler = routes[trimmedPath]

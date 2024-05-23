@@ -10,7 +10,8 @@ class Utilities {
 
     return hashed;
   }
-  public parseJSON(jsonString: string): object {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public parseJSON(jsonString: string): any {
     let output: object;
     try {
       output = JSON.parse(jsonString);
