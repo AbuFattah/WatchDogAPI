@@ -9,6 +9,7 @@ type User = {
   put?: (reqProp: ReqProperties, callback: Callback) => void;
   get?: (reqProp: ReqProperties, callback: Callback) => void;
   delete?: (reqProp: ReqProperties, callback: Callback) => void;
+  verify: (id: string, phone: string, callback: (res: boolean) => void) => void;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
 };
@@ -25,7 +26,7 @@ type Token = {
 };
 
 const handler: Handle = {
-  _token: {},
+  _token: { verify: () => {} },
   tokenHandler: () => {},
 };
 
@@ -39,7 +40,9 @@ handler.tokenHandler = (reqProp, callback) => {
   reqProp.method && handler._token[reqProp.method](reqProp, callback);
 };
 
-handler._token = {};
+handler._token = {
+  verify: () => {},
+};
 
 handler._token.post = (reqProp, callback) => {
   const phone = validatePhone(reqProp.body.phone);
@@ -164,6 +167,27 @@ handler._token.delete = (reqProp, callback) => {
     callback(200, {
       message: "Token deleted successfully",
     });
+  });
+};
+
+handler._token.verify = (id, phone, callback) => {
+  data.read("tokens", id, (err, tokenData) => {
+    if (err) {
+      callback(false);
+
+      return;
+    }
+
+    if (tokenData) {
+      const parsedToken: Token = utilities.parseJSON(tokenData);
+
+      if (phone === parsedToken.phone && parsedToken.expires > Date.now()) {
+        callback(true);
+        return;
+      }
+
+      callback(false);
+    }
   });
 };
 

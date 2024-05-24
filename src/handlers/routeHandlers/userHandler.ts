@@ -2,6 +2,8 @@ import { ReqProperties } from "../../helpers/handleReqRes";
 import data from "../../lib/data";
 import { utilities } from "../../helpers/utilities";
 
+import tokenHandler from "./tokenHandler";
+
 type Callback = (statusCode: number, payload?: object | string) => void;
 
 type User = {
@@ -43,17 +45,27 @@ handler._users.get = (reqProp, callback) => {
     });
   }
   //if valid phone
-  data.read("users", phone, (err, data) => {
-    if (err) {
-      callback(500, {
-        error: "Server Error",
+  const token: string = (reqProp.headersObj.token as string) || "";
+
+  tokenHandler._token.verify(token, phone, (tokenId) => {
+    if (tokenId) {
+      data.read("users", phone, (err, data) => {
+        if (err) {
+          callback(500, {
+            error: "Server Error",
+          });
+          return;
+        }
+        //if no error
+        const user = utilities.parseJSON(data || "");
+        delete user.password;
+        callback(200, user);
       });
-      return;
+    } else {
+      callback(403, {
+        error: "Authentication Failure",
+      });
     }
-    //if no error
-    const user = utilities.parseJSON(data || "");
-    delete user.password;
-    callback(200, user);
   });
 };
 
@@ -65,34 +77,44 @@ handler._users.put = (reqProp, callback) => {
     return;
   }
 
-  data.read("users", phone, (err, dta) => {
-    if (err) {
-      callback(400, { error: "There is a problem with your request" });
-      return;
-    }
+  const token: string = (reqProp.headersObj.token as string) || "";
 
-    const userData = utilities.parseJSON(dta || "");
+  tokenHandler._token.verify(token, phone, (tokenId) => {
+    if (tokenId) {
+      data.read("users", phone, (err, dta) => {
+        if (err) {
+          callback(400, { error: "There is a problem with your request" });
+          return;
+        }
 
-    const firstName = validateName(reqProp.body.firstName);
-    const lastName = validateName(reqProp.body.lastName);
-    const password = validateName(reqProp.body.password);
+        const userData = utilities.parseJSON(dta || "");
 
-    firstName && (userData.firstName = firstName);
-    lastName && (userData.lastName = lastName);
-    password && (userData.password = utilities.hash(password));
+        const firstName = validateName(reqProp.body.firstName);
+        const lastName = validateName(reqProp.body.lastName);
+        const password = validateName(reqProp.body.password);
 
-    data.update("users", phone, userData, (err) => {
-      if (err) {
-        callback(500, {
-          error: "There was a problem in server side",
+        firstName && (userData.firstName = firstName);
+        lastName && (userData.lastName = lastName);
+        password && (userData.password = utilities.hash(password));
+
+        data.update("users", phone, userData, (err) => {
+          if (err) {
+            callback(500, {
+              error: "There was a problem in server side",
+            });
+            return;
+          }
+
+          callback(200, {
+            message: "User updated successfully ",
+          });
         });
-        return;
-      }
-
-      callback(200, {
-        message: "User updated successfully ",
       });
-    });
+    } else {
+      callback(403, {
+        error: "Authentication Failure",
+      });
+    }
   });
 };
 
@@ -141,26 +163,35 @@ handler._users.delete = (reqProp, callback) => {
     callback(400, { error: "You have a problem in your request." });
     return;
   }
+  const token: string = (reqProp.headersObj.token as string) || "";
 
-  data.read("users", phone, (err) => {
-    if (err) {
-      callback(500, {
-        error: "There is a problem in Server side",
-      });
-      return;
-    }
-    data.delete("users", phone, (err) => {
-      if (err) {
-        callback(500, {
-          error: "There is a problem in Server side",
+  tokenHandler._token.verify(token, phone, (tokenId) => {
+    if (tokenId) {
+      data.read("users", phone, (err) => {
+        if (err) {
+          callback(500, {
+            error: "There is a problem in Server side",
+          });
+          return;
+        }
+        data.delete("users", phone, (err) => {
+          if (err) {
+            callback(500, {
+              error: "There is a problem in Server side",
+            });
+            return;
+          }
+
+          callback(200, {
+            message: "User deleted successfully",
+          });
         });
-        return;
-      }
-
-      callback(200, {
-        message: "User deleted successfully",
       });
-    });
+    } else {
+      callback(403, {
+        error: "Authentication Failure",
+      });
+    }
   });
 };
 
