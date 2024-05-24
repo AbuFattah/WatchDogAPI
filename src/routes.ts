@@ -3,7 +3,8 @@
  * This page handles all routes
  */
 import { sampleHandler } from "./handlers/routeHandlers/sampleHandler";
-import { handler } from "./handlers/routeHandlers/userHandler";
+import userHandler from "./handlers/routeHandlers/userHandler";
+import tokenHandler from "./handlers/routeHandlers/tokenHandler";
 
 type Routes = {
   sample?: typeof sampleHandler.handle;
@@ -12,7 +13,8 @@ type Routes = {
 
 const routes: Routes = {
   sample: sampleHandler.handle,
-  user: handler.userHandler,
+  user: userHandler,
+  token: tokenHandler.tokenHandler,
 };
 
 export default routes;

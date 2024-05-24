@@ -21,6 +21,19 @@ class Utilities {
 
     return output;
   }
+
+  public getRandomString(strLen: number): string {
+    const possibleCharacters = "abcdefghijklmnopqrstuvwxyz0123456789";
+    let output = "";
+    for (let i = 0; i < strLen; i++) {
+      output =
+        output +
+        possibleCharacters.charAt(
+          Math.floor(Math.random() * possibleCharacters.length)
+        );
+    }
+    return output;
+  }
 }
 
 export const utilities = new Utilities();

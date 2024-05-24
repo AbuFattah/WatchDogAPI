@@ -1,7 +1,7 @@
 import http, { IncomingMessage, ServerResponse } from "http";
 import handler from "./helpers/handleReqRes";
 import environment from "./helpers/environments";
-import data from "./lib/data";
+// import data from "./lib/data";
 
 type App = {
   //config?: AppConfig;

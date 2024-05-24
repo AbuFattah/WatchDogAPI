@@ -18,11 +18,11 @@ type Handle = {
   _users: User;
 };
 
-export const handler: Handle = {
+const handler: Handle = {
   _users: {},
 };
 
-handler.userHandler = (reqProp, callback) => {
+export default handler.userHandler = (reqProp, callback) => {
   const methodsSet: Set<string> = new Set(["get", "put", "post", "delete"]);
 
   if (!methodsSet.has(reqProp.method ?? "")) {
@@ -135,7 +135,34 @@ handler._users.post = (reqProp, callback) => {
   }
 };
 
-//handler._users.delete = (reqProp, callback) => {};
+handler._users.delete = (reqProp, callback) => {
+  const phone = validatePhone(reqProp.qryStrObj.phone as string);
+  if (!phone) {
+    callback(400, { error: "You have a problem in your request." });
+    return;
+  }
+
+  data.read("users", phone, (err) => {
+    if (err) {
+      callback(500, {
+        error: "There is a problem in Server side",
+      });
+      return;
+    }
+    data.delete("users", phone, (err) => {
+      if (err) {
+        callback(500, {
+          error: "There is a problem in Server side",
+        });
+        return;
+      }
+
+      callback(200, {
+        message: "User deleted successfully",
+      });
+    });
+  });
+};
 
 // VALIDATION LOGIC
 function validateName(firstName: string) {
