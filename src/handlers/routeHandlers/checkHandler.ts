@@ -1,3 +1,9 @@
+/*
+ * Title: Check Handler
+ * Description: Handler to handle user defined checks
+ *
+ */
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ReqProperties } from "../../helpers/handleReqRes";
 import data from "../../lib/data";

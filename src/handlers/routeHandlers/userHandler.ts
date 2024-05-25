@@ -1,3 +1,8 @@
+/*
+ * Title: User Handler
+ * Description: Handles all user related routes.
+ */
+
 import { ReqProperties } from "../../helpers/handleReqRes";
 import data from "../../lib/data";
 import { utilities } from "../../helpers/utilities";

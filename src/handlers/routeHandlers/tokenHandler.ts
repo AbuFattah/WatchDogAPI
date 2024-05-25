@@ -1,3 +1,6 @@
+/*
+ * Description: Handles all token routes
+ */
 import { ReqProperties } from "../../helpers/handleReqRes";
 import data from "../../lib/data";
 import { utilities } from "../../helpers/utilities";

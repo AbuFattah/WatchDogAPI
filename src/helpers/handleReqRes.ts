@@ -1,3 +1,8 @@
+/*
+ * Title: Handle Request Response
+ * Description: Handle Resquest and response
+ *
+ */
 import { IncomingHttpHeaders, IncomingMessage, ServerResponse } from "http";
 import { StringDecoder } from "string_decoder";
 import { parse, UrlWithParsedQuery } from "url";

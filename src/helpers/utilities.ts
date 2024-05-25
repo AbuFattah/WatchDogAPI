@@ -1,3 +1,8 @@
+/*
+ * Title: Utilities
+ * Description: Important utility functions
+ */
+
 import { createHmac } from "node:crypto";
 import dotenv from "dotenv";
 dotenv.config();
