@@ -5,11 +5,11 @@
 
 Features and Functionality completed:
 
--User management: Create, edit, and delete users
--Token-based authentication
--Logout functionality
--Token management: Create, retrieve, and delete tokens
--Modify token expiry
+- User management: Create, edit, and delete users
+- Token-based authentication
+- Logout functionality
+- Token management: Create, retrieve, and delete tokens
+- Modify token expiry
 
 Features and Functionality Yet to be completed (Approximate completion Date: 28/05/2024):
 
