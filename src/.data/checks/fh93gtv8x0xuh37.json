@@ -1,1 +1,9 @@
-{"id":"fh93gtv8x0xuh37","userPhone":"01966666666","protocol":"http","method":"get","url":"google.com","successCodes":[200,201],"timeoutSeconds":2}
+{
+  "id": "fh93gtv8x0xuh37",
+  "userPhone": "01966666666",
+  "protocol": "http",
+  "method": "get",
+  "url": "google.com",
+  "successCodes": [200, 201],
+  "timeoutSeconds": 2
+}

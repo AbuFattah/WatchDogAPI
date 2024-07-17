@@ -7,7 +7,7 @@ import path, { dirname } from "path";
 
 type Callback = (
   msg: NodeJS.ErrnoException | boolean | null | string,
-  data?: string
+  data?: string | string[]
 ) => void;
 
 type Lib = {
@@ -16,6 +16,7 @@ type Lib = {
   read: (dir: string, file: string, cb: Callback) => void;
   update: (dir: string, file: string, data: object, callback: Callback) => void;
   delete: (dir: string, file: string, callback: Callback) => void;
+  list: (dir: string, callback: Callback) => void;
 };
 
 const lib: Lib = {
@@ -24,6 +25,7 @@ const lib: Lib = {
   read: () => {},
   update: () => {},
   delete: () => {},
+  list: () => {},
 };
 
 //write data to file
@@ -104,6 +106,21 @@ lib.delete = (dir, file, callback) => {
     }
 
     callback(false);
+  });
+};
+
+lib.list = (dir: string, callback: Callback) => {
+  fs.readdir(`${lib.basedir + dir}/`, (err, filenames) => {
+    if (err || filenames.length <= 0) {
+      callback("Error Reading Directory");
+      return;
+    }
+
+    const files: string[] = filenames
+      .filter((file) => !file.startsWith("."))
+      .map((file) => file.replace(".json", ""));
+
+    callback(false, files);
   });
 };
 

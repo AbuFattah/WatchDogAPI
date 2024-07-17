@@ -1,37 +1,15 @@
-// Description: Project Initial file
-import http, { IncomingMessage, ServerResponse } from "http";
-import handler from "./helpers/handleReqRes";
-import environment from "./helpers/environments";
-// import data from "./lib/data";
+import server from "./lib/server";
+import worker from "./lib/worker";
 
-type App = {
-  //config?: AppConfig;
-  createServer?: () => void;
-  handleReqRes?: (req: IncomingMessage, res: ServerResponse) => void;
+const app = {
+  init: () => {},
 };
 
-// type AppConfig = {
-//   port?: number;
-// };
-
-const app: App = {};
-
-// data.delete("test", "newFile", (err) => {
-//   console.log(err);
-// });
-
-// app.config = {
-//   port: 3000,
-// };
-
-app.createServer = () => {
-  const server = http.createServer(app.handleReqRes);
-
-  server.listen(environment.port, () => {
-    console.log(`Listening to port ${environment.port}`);
-  });
+app.init = () => {
+  server.init();
+  worker.init();
 };
 
-app.handleReqRes = handler.handleReqRes;
+app.init();
 
-app.createServer();
+export default app;
